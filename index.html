@@ -1,0 +1,95 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:["timeline"]});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+    //   var queryString = encodeURIComponent('SELECT A, H, O, Q, R, U LIMIT 5 OFFSET 8');
+
+      var query = new google.visualization.Query(
+        'https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/gviz/tq?gid=2094035466&headers=1'
+            // 'https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/gviz/tq?gid=2137502355&headers=1'
+        //   'https://docs.google.com/spreadsheets/d/1gGXoFQYeIljtVVLaRZMXCxog8SwU9q9sE2Zb7hvYK_w/gviz/tq?gid=1583937417&headers=1'
+          );
+      query.send(handleQueryResponse2);
+    }
+
+    function handleQueryResponse2(response) {
+      if (response.isError()) {
+        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+      }
+
+      var data = response.getDataTable();
+      console.log(data)
+      data.setColumnProperty(3, 'role', 'style');
+      data.setColumnProperty(2, 'role', 'tooltip');
+      data.setColumnProperty(2, 'p', {'html': true});
+
+      console.log(data)
+    //   var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+    //   chart.draw(data, { height: 400 });
+
+    // data.insertColumn(2, {type: 'string', role: 'tooltip', p: {html: true}});
+
+    var dateFormat = new google.visualization.DateFormat({
+        pattern: 'MMM dd yyyy'
+    //   pattern: 'h:mm a'
+    });
+
+    for (var i = 0; i < data.getNumberOfRows(); i++) {
+        var duration = (data.getValue(i, 5).getTime() - data.getValue(i, 4).getTime()) / 1000 ;
+      var hours = parseInt( duration / 3600 ) % 24;
+      var minutes = parseInt( duration / 60 ) % 60;
+      var seconds = duration % 60;
+
+      var tooltip = '<div class="ggl-tooltip"><span>' +
+        data.getValue(i, 1) + '</span></div><div class="ggl-tooltip"><span>' +
+        // data.getValue(i, 0) + '</span>: ' + 
+        dateFormat.formatValue(data.getValue(i, 4)) + ' - ' +
+        dateFormat.formatValue(data.getValue(i, 5)) + '</span></div><div class="ggl-tooltip"><span>' +
+        data.getValue(i, 2) + '</span></div>';
+
+      data.setValue(i, 2, tooltip);
+    }
+
+    var options = {
+        height: (data.getNumberOfRows() * 20) + 42,
+        tooltip: {
+            isHtml: true,
+            trigger: 'focus'
+        },
+        // tooltip: { trigger: 'selection' }
+    //   height: 1000,
+      timeline: { groupByRowLabel: true }
+    };
+
+
+      var chart = new google.visualization.Timeline(document.getElementById('timeline_div'));
+
+      chart.draw(data, options);
+    }
+
+    </script>
+    <style>
+        text {font-family: 'Roboto'; font-size: 14px; cursor:default;}
+        rect {rx: 5px; ry: 5px;}
+        .ggl-tooltip {
+        border: 1px solid #E0E0E0;
+        font-family: Arial, Helvetica;
+        padding: 6px 6px 6px 6px;
+        }
+
+        .ggl-tooltip span {
+        font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+  <div id="timeline_div"></div>
+
+</body>
+</html>
+
