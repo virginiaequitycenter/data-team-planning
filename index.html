@@ -1,79 +1,81 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load("current", {packages:["timeline"]});
-    google.charts.setOnLoadCallback(drawChart);
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Data Team Planning</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages:["timeline"]});
+        google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
-    //   var queryString = encodeURIComponent('SELECT A, H, O, Q, R, U LIMIT 5 OFFSET 8');
+        function drawChart() {
 
-      var query = new google.visualization.Query(
-        'https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/gviz/tq?gid=2094035466&headers=1'
-            // 'https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/gviz/tq?gid=2137502355&headers=1'
-        //   'https://docs.google.com/spreadsheets/d/1gGXoFQYeIljtVVLaRZMXCxog8SwU9q9sE2Zb7hvYK_w/gviz/tq?gid=1583937417&headers=1'
-          );
-      query.send(handleQueryResponse2);
-    }
+        var query = new google.visualization.Query(
+            'https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/gviz/tq?gid=2094035466&headers=1'
+            );
+        query.send(handleQueryResponse2);
+        }
 
-    function handleQueryResponse2(response) {
-      if (response.isError()) {
-        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-      }
+        function handleQueryResponse2(response) {
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            return;
+        }
 
-      var data = response.getDataTable();
-      console.log(data)
-      data.setColumnProperty(3, 'role', 'style');
-      data.setColumnProperty(2, 'role', 'tooltip');
-      data.setColumnProperty(2, 'p', {'html': true});
+        var data = response.getDataTable();
+        console.log(data)
+        data.setColumnProperty(3, 'role', 'style');
+        data.setColumnProperty(2, 'role', 'tooltip');
+        data.setColumnProperty(2, 'p', {'html': true});
 
-      console.log(data)
-    //   var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-    //   chart.draw(data, { height: 400 });
+        console.log(data)
+        //   var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        //   chart.draw(data, { height: 400 });
 
-    // data.insertColumn(2, {type: 'string', role: 'tooltip', p: {html: true}});
+        // data.insertColumn(2, {type: 'string', role: 'tooltip', p: {html: true}});
 
-    var dateFormat = new google.visualization.DateFormat({
-        pattern: 'MMM dd yyyy'
-    //   pattern: 'h:mm a'
-    });
+        var dateFormat = new google.visualization.DateFormat({
+            pattern: 'MMM dd yyyy'
+        //   pattern: 'h:mm a'
+        });
 
-    for (var i = 0; i < data.getNumberOfRows(); i++) {
-        var duration = (data.getValue(i, 5).getTime() - data.getValue(i, 4).getTime()) / 1000 ;
-      var hours = parseInt( duration / 3600 ) % 24;
-      var minutes = parseInt( duration / 60 ) % 60;
-      var seconds = duration % 60;
+        for (var i = 0; i < data.getNumberOfRows(); i++) {
+            var duration = (data.getValue(i, 5).getTime() - data.getValue(i, 4).getTime()) / 1000 ;
+        var hours = parseInt( duration / 3600 ) % 24;
+        var minutes = parseInt( duration / 60 ) % 60;
+        var seconds = duration % 60;
 
-      var tooltip = '<div class="ggl-tooltip"><span>' +
-        data.getValue(i, 1) + '</span></div><div class="ggl-tooltip"><span>' +
-        // data.getValue(i, 0) + '</span>: ' + 
-        dateFormat.formatValue(data.getValue(i, 4)) + ' - ' +
-        dateFormat.formatValue(data.getValue(i, 5)) + '</span></div><div class="ggl-tooltip"><span>' +
-        data.getValue(i, 2) + '</span></div>';
+        var tooltip = '<div class="ggl-tooltip"><span>' +
+            data.getValue(i, 1) + '</span></div><div class="ggl-tooltip"><span>' +
+            // data.getValue(i, 0) + '</span>: ' + 
+            dateFormat.formatValue(data.getValue(i, 4)) + ' - ' +
+            dateFormat.formatValue(data.getValue(i, 5)) + '</span></div><div class="ggl-tooltip"><span>' +
+            data.getValue(i, 2) + '</span></div>';
 
-      data.setValue(i, 2, tooltip);
-    }
+        data.setValue(i, 2, tooltip);
+        }
 
-    var options = {
-        height: (data.getNumberOfRows() * 20) + 42,
-        tooltip: {
-            isHtml: true,
-            trigger: 'focus'
-        },
-        // tooltip: { trigger: 'selection' }
-    //   height: 1000,
-      timeline: { groupByRowLabel: true }
-    };
+        var options = {
+            height: (data.getNumberOfRows() * 20) + 42,
+            tooltip: {
+                isHtml: true,
+                trigger: 'focus'
+            },
+        //   height: 1000,
+        timeline: { groupByRowLabel: true }
+        };
 
 
-      var chart = new google.visualization.Timeline(document.getElementById('timeline_div'));
+        var chart = new google.visualization.Timeline(document.getElementById('timeline_div'));
 
-      chart.draw(data, options);
-    }
+        chart.draw(data, options);
+        }
 
     </script>
     <style>
+        body {font-family: 'Roboto';}
         text {font-family: 'Roboto'; font-size: 14px; cursor:default;}
         rect {rx: 5px; ry: 5px;}
         .ggl-tooltip {
@@ -88,8 +90,14 @@
     </style>
 </head>
 <body>
-  <div id="timeline_div"></div>
-
+    <main class="container-fluid">
+        <div class="m-4">
+            <h1>Democratization of Data</h1>
+            <h2>Team Planning</h2>
+            <span><a href="https://docs.google.com/spreadsheets/d/1qYWZ4Xx7tQS382kgDpj3R9qnBK0c9reKzSvxTWB-yP8/edit#gid=2094035466" target="_blank">Team Planning Google Sheet</a></span>
+            <div id="timeline_div" class="my-4"></div>
+         </div>
+    </main>
 </body>
 </html>
 
